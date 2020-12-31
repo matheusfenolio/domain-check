@@ -1,10 +1,10 @@
 {
   "name": "domain-check-tool",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": "lib/index.js",
   "types": "lib",
   "license": "MIT",
-  "repository":"https://github.com/matheusfenolio/domain-check",
+  "repository": "https://github.com/matheusfenolio/domain-check",
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/cli-table": "^0.3.0",
