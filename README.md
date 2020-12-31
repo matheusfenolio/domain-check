@@ -12,13 +12,13 @@ Withou those libs this project won't work!
 
 ### Simple return
 
-```
+```javascript
 import { checkHosts } from 'domain-check-tool';
 
 checkHosts(['https://google.com', 'google.com']).then(response => { console.log(response) });
 ```
 
-```
+```javascript
 [
   {
     isAlive: true,
@@ -39,13 +39,13 @@ checkHosts(['https://google.com', 'google.com']).then(response => { console.log(
 
 ### Show table
 
-```
+```javascript
 import { checkHosts } from 'domain-check-tool';
 
 checkHosts(['https://google.com', 'google.com', 'forExeple.com'], true);
 ```
 
-```
+```bash
 ┌────────┬────────────────────┬───────────┬───────┬─────────┐
 │ STATUS │ HOST               │   HTTP    │ PING  │  LOSS%  │
 ├────────┼────────────────────┼───────────┼───────┼─────────┤
@@ -59,13 +59,13 @@ checkHosts(['https://google.com', 'google.com', 'forExeple.com'], true);
 
 ### Show only errors in table
 
-```
+```javascript
 import { checkHosts } from 'domain-check-tool';
 
 checkHosts(['htt://forExemple.com', 'google.com'], true, true);
 ```
 
-```
+```bash
 ┌────────┬──────────────────────┬───────────┬───────┬─────────┐
 │ STATUS │ HOST                 │   HTTP    │ PING  │  LOSS%  │
 ├────────┼──────────────────────┼───────────┼───────┼─────────┤
