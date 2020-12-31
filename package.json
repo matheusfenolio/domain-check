@@ -1,6 +1,6 @@
 {
   "name": "domain-check-tool",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "lib/index.js",
   "types": "lib",
   "license": "MIT",
@@ -17,6 +17,7 @@
     "build": "npx tsc -p ."
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "cli-table": "^0.3.4",
     "ping": "^0.4.0"
   }
