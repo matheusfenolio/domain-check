@@ -53,7 +53,7 @@ checkHosts(['https://google.com', 'google.com', 'forExeple.com'], true);
 ├────────┼────────────────────┼───────────┼───────┼─────────┤
 │   ✔    │ https://google.com │    200    │ true  │  0.000  │
 ├────────┼────────────────────┼───────────┼───────┼─────────┤
-│   ✖    │ forExemple.com      │ NOT VALID │ false │ unknown │
+│   ✖    │ forExemple.com     │ NOT VALID │ false │ unknown │
 └────────┴────────────────────┴───────────┴───────┴─────────┘
 ```
 
