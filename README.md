@@ -14,25 +14,67 @@ Without those libs this project won't work!
 ### Simple return
 
 ```javascript
-import { checkHosts } from 'domain-check-tool';
+import { checkHosts, IHost, RequestType } from 'domain-check-tool';
 
-checkHosts(['https://google.com', 'google.com']).then(response => { console.log(response) });
+const host: IHost[] = [
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 21,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    }
+]
+
+checkHosts(host, false).then(response => console.log(response));
 ```
 
 ```javascript
 [
   {
-    isAlive: true,
-    host: 'google.com',
-    http: 'NOT VALID',
+    isAlive: false,
+    hostName: 'Google',
+    host: 'https://google.com',
+    http: 400,
     ping: true,
+    port: true,
     packetLoss: '0.000'
   },
   {
     isAlive: true,
+    hostName: 'Google',
     host: 'https://google.com',
-    http: '200',
+    http: 200,
     ping: true,
+    port: true,
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: false,
+    hostName: 'Google',
+    host: 'https://google.com',
+    http: 400,
+    ping: true,
+    port: false,
     packetLoss: '0.000'
   }
 ]
@@ -41,35 +83,95 @@ checkHosts(['https://google.com', 'google.com']).then(response => { console.log(
 ### Show table
 
 ```javascript
-import { checkHosts } from 'domain-check-tool';
+import { checkHosts, IHost, RequestType } from 'domain-check-tool';
 
-checkHosts(['https://google.com', 'google.com', 'forExeple.com'], true);
+const host: IHost[] = [
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 21,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    }
+]
+
+checkHosts(host, true).then(response => console.log(response));
 ```
 
 ```bash
-┌────────┬────────────────────┬───────────┬───────┬─────────┐
-│ STATUS │ HOST               │   HTTP    │ PING  │  LOSS%  │
-├────────┼────────────────────┼───────────┼───────┼─────────┤
-│   ✔    │ google.com         │ NOT VALID │ true  │  0.000  │
-├────────┼────────────────────┼───────────┼───────┼─────────┤
-│   ✔    │ https://google.com │    200    │ true  │  0.000  │
-├────────┼────────────────────┼───────────┼───────┼─────────┤
-│   ✖    │ forExemple.com     │ NOT VALID │ false │ unknown │
-└────────┴────────────────────┴───────────┴───────┴─────────┘
+┌────────┬────────┬────────────────────┬──────┬──────┬──────┬───────┐
+│ STATUS │ NAME   │ HOST               │ HTTP │ PORT │ PING │ LOSS% │
+├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
+│   ✔    │ Google │ https://google.com │ 200  │  ✔   │  ✔   │ 0.000 │
+├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
+│   ✖    │ Google │ https://google.com │ 400  │  ✔   │  ✔   │ 0.000 │
+├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
+│   ✖    │ Google │ https://google.com │ 400  │  ✖   │  ✔   │ 0.000 │
+└────────┴────────┴────────────────────┴──────┴──────┴──────┴───────┘
 ```
 
 ### Show only errors in table
 
 ```javascript
-import { checkHosts } from 'domain-check-tool';
+import { checkHosts, IHost, RequestType } from 'domain-check-tool';
 
-checkHosts(['htt://forExemple.com', 'google.com'], true, true);
+const host: IHost[] = [
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 21,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    }
+]
+
+checkHosts(host, true, true).then(response => console.log(response));
 ```
 
 ```bash
-┌────────┬──────────────────────┬───────────┬───────┬─────────┐
-│ STATUS │ HOST                 │   HTTP    │ PING  │  LOSS%  │
-├────────┼──────────────────────┼───────────┼───────┼─────────┤
-│   ✖    │ htt://forExemple.com │ NOT VALID │ false │ unknown │
-└────────┴──────────────────────┴───────────┴───────┴─────────┘
+┌────────┬────────┬────────────────────┬──────┬──────┬──────┬───────┐
+│ STATUS │ NAME   │ HOST               │ HTTP │ PORT │ PING │ LOSS% │
+├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
+│   ✖    │ Google │ https://google.com │ 400  │  ✔   │  ✔   │ 0.000 │
+├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
+│   ✖    │ Google │ https://google.com │ 400  │  ✖   │  ✔   │ 0.000 │
+└────────┴────────┴────────────────────┴──────┴──────┴──────┴───────┘
 ```

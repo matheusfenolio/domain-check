@@ -92,59 +92,27 @@ export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyEr
                 hostName: hostObject.name,
                 host: hostObject.host,
                 http: hostObject.bypassHttp? 'SKIPED':axiosResponse!==undefined&&axiosResponse!==null? axiosResponse.status: axiosError, 
-                ping: hostObject.bypassPing? 'SKIPED':isAlivePing? '✔':'✖',
-                port: hostObject.bypassPort? 'SKIPED':isAlivePort? '✔':'✖',
+                ping: hostObject.bypassPing? 'SKIPED':isAlivePing!==undefined?isAlivePing:false,
+                port: hostObject.bypassPort? 'SKIPED':isAlivePort!==undefined?isAlivePort:false,
                 packetLoss: hostObject.bypassPing? '':`${pingResponse?pingResponse.packetLoss:'NO INFO'}`,
           });
     });
 
     await Promise.all(promises)
 
-    const table = new Table({
-        head: ['STATUS', 'NAME', 'HOST', 'HTTP', 'PORT', 'PING', 'LOSS%'],
-        colAligns: ["middle", "left", "left", "middle", "middle", "middle", "middle"]
-    });
-
-    results.filter(result => showOnlyErrors?result.isAlive===false:result.isAlive===result.isAlive).sort((a,b) => (b.isAlive - a.isAlive)).forEach(result => {
-        table.push([result.isAlive?'✔':'✖', result.hostName, result.host, result.http, result.port, result.ping, result.packetLoss]);
-    })
-
     if(showTable){
         // console.clear();
+        const table = new Table({
+            head: ['STATUS', 'NAME', 'HOST', 'HTTP', 'PORT', 'PING', 'LOSS%'],
+            colAligns: ["middle", "left", "left", "middle", "middle", "middle", "middle"]
+        });
+    
+        results.filter(result => showOnlyErrors?result.isAlive===false:result.isAlive===result.isAlive).sort((a,b) => (b.isAlive - a.isAlive)).forEach(result => {
+            table.push([result.isAlive?'✔':'✖', result.hostName, result.host, result.http, result.port? '✔':'✖', result.ping? '✔':'✖', result.packetLoss]);
+        })
+
         console.log(table.toString());
     }
-    
 
     return results;
 }
-
-const host = [
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 21,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    }
-]
-
-checkHosts(host, true);
