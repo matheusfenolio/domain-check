@@ -211,7 +211,7 @@ const host: IHost[] = [
         httpRequestType: RequestType.GET,
         bypassHttp: true,
         bypassPing: false,
-        bypassPort: false,
+        bypassPort: true,
     }
 ]
 
