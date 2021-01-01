@@ -11,7 +11,7 @@ Without those libs this project won't work!
 ## Examples
 
 ```javascript
-import { checkHosts, IHost, RequestType } from './index';
+import { checkHosts, IHost, RequestType } from 'domain-check-tool';
 
 const hosts: IHost[] = [
     {
