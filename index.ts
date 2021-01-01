@@ -1,8 +1,15 @@
 import axios from 'axios';
-import * as ping from 'ping';
+import { PingResponse, promise } from 'ping';
 import Table from 'cli-table';
+import _ from 'lodash';
 
 const isPortReachable = require('is-port-reachable');
+
+interface IHostResponse {
+    isAlive: boolean,
+    code: string,
+    packetLoss?: string
+}
 
 export enum RequestType {
     GET = 'GET',
@@ -12,103 +19,125 @@ export enum RequestType {
     PATCH = 'PATCH'
 }
 export interface IHost {
-    name: string,
     host: string,
-    port: number,
-    httpRequestType: RequestType,
-    header?: object,
-    body?: object,
+    identifier?: string,
+    port?: number,
+    httpRequestType?: RequestType,
+    header?: object | null,
+    body?: object | null,
     bypassHttp?: boolean,
     bypassPing?: boolean,
     bypassPort?: boolean,
 }
 
+export enum ResponseStatus {
+    PASSED = 'PASSED',
+    ERROR = 'ERROR',
+    INVALID = 'INVALID',
+    SKIPPED = 'SKIPPED'
+}
 export interface IResults {
     isAlive: boolean,
-    hostName: string,
+    hostIdentifier: string,
     host: string,
-    http: string | number,
-    ping: boolean | string,
-    port: boolean | string,
+    http: string,
+    ping: string,
+    port: string,
     packetLoss: string;
 }
 
-const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+const validateURL = (url: string): boolean => {
+    const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+
+    return urlRegex.test(url)
+}
+
+const requestHttp = async (host: IHost): Promise<IHostResponse> => {
+    if(host.bypassHttp){
+        return { isAlive: true, code: ResponseStatus.SKIPPED};
+    }
+
+    try{
+        if(validateURL(host.host)){
+            const response = await axios({
+                url: host.host,
+                method: _.isNil(host.httpRequestType)?RequestType.GET:host.httpRequestType,
+                headers: host.header, 
+                data: host.body
+              });
+            return { isAlive: true, code: response.status.toString()};
+        }else{
+            return { isAlive: false, code: ResponseStatus.INVALID  }
+        }
+    }catch(err){
+        return { isAlive: false, code: _.isNil(err.code)?err.response.status.toString():err.code.toString() }
+    }
+}
+
+const requestPing = async (host: IHost): Promise<IHostResponse> => {
+    if(host.bypassPing){
+        return { isAlive: true, code: ResponseStatus.SKIPPED, packetLoss: ResponseStatus.SKIPPED};
+    }
+    
+    try{
+        const response: PingResponse = await promise.probe(host.host.replace('http://', '').replace('https://', '').replace('www.', ''))
+        return { 
+            isAlive: response.alive, 
+            code: response.alive?ResponseStatus.PASSED:ResponseStatus.ERROR, 
+            packetLoss: response.alive?response.packetLoss:ResponseStatus.ERROR 
+        }
+    }catch(err){
+        return { isAlive: false, code: ResponseStatus.ERROR, packetLoss: ResponseStatus.ERROR }
+    }
+}
+
+const requestPort = async (host: IHost): Promise<IHostResponse> => {
+    if(host.bypassPort || _.isNil(host.port)){
+        return { isAlive: true, code: ResponseStatus.SKIPPED};
+    }
+    
+    try {
+        const response = await isPortReachable(host.port, {host: host.host.replace('http://', '').replace('https://', '').replace('www.', '')})        
+        return { isAlive: response, code: response?ResponseStatus.PASSED:ResponseStatus.ERROR }
+    } catch (err) {
+        return { isAlive: false, code: ResponseStatus.ERROR }
+    }
+}
+
+const isHostAlive = (host: IHost, http: IHostResponse, ping: IHostResponse, port: IHostResponse): boolean => {
+    return http.isAlive&&ping.isAlive&&port.isAlive;
+} 
 
 export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyErrors?: boolean): Promise<IResults[]> => {
     const results: IResults[] = [];
 
-    const promises = hosts.map(async hostObject => {
-
-        if(hostObject.bypassHttp && hostObject.bypassPing && hostObject.bypassPort){
-            return;
-        }
-
-        const host = hostObject.host;
-
-        let axiosResponse = null;
-        let axiosError = null;
-        let pingResponse = null;
-        const isValidUrl = urlRegex.test(host);
-
-        let isAlivePing = hostObject.bypassPing;
-        let isAliveHttp = hostObject.bypassHttp;
-        let isAlivePort = hostObject.bypassPort;
-        
-        if(!hostObject.bypassPing){
-            try{
-                pingResponse = await ping.promise.probe(host.replace('http://', '').replace('https://', '').replace('www.', ''))
-                isAlivePing = pingResponse.alive;
-            }catch(err){
-                console.error(err);
-            }
-            
-        }
-
-        if(!isValidUrl){
-            axiosResponse = { status: 'NOT VALID' }
-        }else if(!hostObject.bypassHttp){
-            try{
-                axiosResponse = await axios({
-                    url: hostObject.host,
-                    method: hostObject.httpRequestType,
-                    headers: hostObject.header, 
-                    data: hostObject.body
-                  });
-
-                isAliveHttp = true;
-            }catch(err){
-                axiosError = err.code?err.code:err.response.status;
-            }
-        }  
-
-        if(!hostObject.bypassPort){
-            isAlivePort = await isPortReachable(hostObject.port, {host: host.replace('http://', '').replace('https://', '').replace('www.', '')})
-        }
+    const promises = hosts.map(async hostObject => {        
+        const responseHttp:IHostResponse = await requestHttp(hostObject);
+        const responsePing:IHostResponse = await requestPing(hostObject);
+        const responsePort:IHostResponse = await requestPort(hostObject);
 
         results.push(
             { 
-                isAlive: isAlivePing && isAliveHttp && isAlivePort?isAlivePort:false, 
-                hostName: hostObject.name,
+                isAlive: isHostAlive(hostObject, responseHttp, responsePing, responsePort), 
+                hostIdentifier: _.isNil(hostObject.identifier)?hostObject.host:hostObject.identifier,
                 host: hostObject.host,
-                http: hostObject.bypassHttp? 'SKIPPED':axiosResponse!==undefined&&axiosResponse!==null? axiosResponse.status: axiosError, 
-                ping: hostObject.bypassPing? 'SKIPPED':isAlivePing!==undefined?isAlivePing:false,
-                port: hostObject.bypassPort? 'SKIPPED':isAlivePort!==undefined?isAlivePort:false,
-                packetLoss: hostObject.bypassPing? '':`${pingResponse?pingResponse.packetLoss:'NO INFO'}`,
+                http: responseHttp.code, 
+                ping: responsePing.code,
+                port: responsePort.code,
+                packetLoss: _.isNil(responsePing.packetLoss)?'0':responsePing.packetLoss,
           });
     });
 
     await Promise.all(promises)
 
     if(showTable){
-        // console.clear();
         const table = new Table({
             head: ['STATUS', 'NAME', 'HOST', 'HTTP', 'PORT', 'PING', 'LOSS%'],
             colAligns: ["middle", "left", "left", "middle", "middle", "middle", "middle"]
         });
     
-        results.filter(result => showOnlyErrors?result.isAlive===false:result.isAlive===result.isAlive).sort((a,b) => (b.isAlive - a.isAlive)).forEach(result => {
-            table.push([result.isAlive?'✔':'✖', result.hostName, result.host, result.http, result.port?'✔':result.port!=='SKIPPED'?'SKIPPED':'✖', result.ping? '✔':result.ping!=='SKIPPED'?'SKIPPED':'✖', result.packetLoss]);
+        results.filter(result => showOnlyErrors?result.isAlive===false:result.isAlive===result.isAlive).forEach(result => {
+            table.push([result.isAlive?'✔':'✖', result.hostIdentifier, result.host, result.http, result.port, result.ping, result.packetLoss]);
         })
 
         console.log(table.toString());

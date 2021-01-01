@@ -6,23 +6,29 @@ export declare enum RequestType {
     PATCH = "PATCH"
 }
 export interface IHost {
-    name: string;
     host: string;
-    port: number;
-    httpRequestType: RequestType;
-    header?: object;
-    body?: object;
+    identifier?: string;
+    port?: number;
+    httpRequestType?: RequestType;
+    header?: object | null;
+    body?: object | null;
     bypassHttp?: boolean;
     bypassPing?: boolean;
     bypassPort?: boolean;
 }
+export declare enum ResponseStatus {
+    PASSED = "PASSED",
+    ERROR = "ERROR",
+    INVALID = "INVALID",
+    SKIPPED = "SKIPPED"
+}
 export interface IResults {
     isAlive: boolean;
-    hostName: string;
+    hostIdentifier: string;
     host: string;
-    http: string | number;
-    ping: boolean | string;
-    port: boolean | string;
+    http: string;
+    ping: string;
+    port: string;
     packetLoss: string;
 }
 export declare const checkHosts: (hosts: IHost[], showTable?: boolean | undefined, showOnlyErrors?: boolean | undefined) => Promise<IResults[]>;

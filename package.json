@@ -14,13 +14,15 @@
     "typescript": "^4.1.3"
   },
   "scripts": {
-    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/index.ts",
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules test.ts",
     "build": "npx tsc -p ."
   },
   "dependencies": {
+    "@types/lodash": "^4.14.166",
     "axios": "^0.21.1",
     "cli-table": "^0.3.4",
     "is-port-reachable": "^3.0.0",
+    "lodash": "^4.17.20",
     "ping": "^0.4.0"
   },
   "keywords": [

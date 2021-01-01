@@ -1,233 +1,199 @@
 # domain-check-tool
 
 ## Sumary
-For monitor a list of hosts using HTTP requests and ICMP.
+For monitor a list of hosts using HTTP, ICMP and PORT check.
 
 ## Credits
 Without those libs this project won't work!
 
-[PING](https://www.npmjs.com/package/ping) | [CLI-TABLE](https://www.npmjs.com/package/cli-table) | [IS-PORT-REACHABLE](https://www.npmjs.com/package/is-port-reachable) | [AXIOS](https://www.npmjs.com/package/axios)
+[PING](https://www.npmjs.com/package/ping) | [CLI-TABLE](https://www.npmjs.com/package/cli-table) | [IS-PORT-REACHABLE](https://www.npmjs.com/package/is-port-reachable) | [AXIOS](https://www.npmjs.com/package/axios) | [LODASH](https://www.npmjs.com/package/lodash)
+
 ## Examples
 
-### Simple return
-
 ```javascript
-import { checkHosts, IHost, RequestType } from 'domain-check-tool';
+import { checkHosts, IHost, RequestType } from './index';
 
-const host: IHost[] = [
+const hosts: IHost[] = [
     {
-        name: 'Google',
         host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
+        identifier: 'HTTPS',
     },
     {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
+        host: 'http://google.com',
+        identifier: 'HTTP',
     },
     {
-        name: 'Google',
+        host: 'www.google.com',
+        identifier: 'WWW',
+    },
+    {
+        host: 'https://www.google.com',
+        identifier: 'HTTPS + WWW',
+    },
+    {
+        host: 'http://www.google.com',
+        identifier: 'HTTP + WWW',
+    },
+    {
         host: 'https://google.com',
-        port: 21,
+        identifier: 'HEADER',
         httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
+        header: { user: 'user' },
+    },
+    {
+        host: 'https://google.com',
+        identifier: 'BODY. ALSO THIS ONE WILL RETURN BAD REQUEST',
+        httpRequestType: RequestType.GET,
+        body: { test: 'test' },
+    },
+    {
+        host: 'google.com',
+        identifier: 'HOST',
+        bypassHttp: true,
+    },
+    {
+        host: 'https://google.com',
+        identifier: 'PORT',
+        port: 80,
+        bypassHttp: true,
+    },
+    {
+        host: 'https://google.com',
+        identifier: 'COMPLETE',
+        httpRequestType: RequestType.GET,
+        port: 80,
+        header: null,
+        body: null,
+        bypassHttp: false,
+        bypassPing: false,
+        bypassPort: false
     }
 ]
 
-checkHosts(host, false).then(response => console.log(response));
+checkHosts(hosts, true).then(response => console.log(response));
 ```
+### Table printed
+
+```bash
+┌────────┬─────────────────────────────────────────────┬────────────────────────┬─────────┬─────────┬────────┬───────┐
+│ STATUS │ NAME                                        │ HOST                   │  HTTP   │  PORT   │  PING  │ LOSS% │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✖    │ WWW                                         │ www.google.com         │ INVALID │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ HOST                                        │ google.com             │ SKIPPED │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTP + WWW                                  │ http://www.google.com  │   200   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTPS + WWW                                 │ https://www.google.com │   200   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ PORT                                        │ https://google.com     │ SKIPPED │ PASSED  │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTP                                        │ http://google.com      │   200   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✖    │ BODY. ALSO THIS ONE WILL RETURN BAD REQUEST │ https://google.com     │   400   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTPS                                       │ https://google.com     │   200   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ HEADER                                      │ https://google.com     │   200   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
+│   ✔    │ COMPLETE                                    │ https://google.com     │   200   │ PASSED  │ PASSED │ 0.000 │
+└────────┴─────────────────────────────────────────────┴────────────────────────┴─────────┴─────────┴────────┴───────┘
+```
+
+### Object returned
 
 ```javascript
 [
   {
     isAlive: false,
-    hostName: 'Google',
-    host: 'https://google.com',
-    http: 400,
-    ping: true,
-    port: true,
+    hostIdentifier: 'WWW',
+    host: 'www.google.com',
+    http: 'INVALID',
+    ping: 'PASSED',
+    port: 'SKIPPED',
     packetLoss: '0.000'
   },
   {
     isAlive: true,
-    hostName: 'Google',
+    hostIdentifier: 'HOST',
+    host: 'google.com',
+    http: 'SKIPPED',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'HTTP + WWW',
+    host: 'http://www.google.com',
+    http: '200',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'HTTPS + WWW',
+    host: 'https://www.google.com',
+    http: '200',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'PORT',
     host: 'https://google.com',
-    http: 200,
-    ping: true,
-    port: true,
+    http: 'SKIPPED',
+    ping: 'PASSED',
+    port: 'PASSED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'HTTP',
+    host: 'http://google.com',
+    http: '200',
+    ping: 'PASSED',
+    port: 'SKIPPED',
     packetLoss: '0.000'
   },
   {
     isAlive: false,
-    hostName: 'Google',
+    hostIdentifier: 'BODY. ALSO THIS ONE WILL RETURN BAD REQUEST',
     host: 'https://google.com',
-    http: 400,
-    ping: true,
-    port: false,
+    http: '400',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'HTTPS',
+    host: 'https://google.com',
+    http: '200',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'HEADER',
+    host: 'https://google.com',
+    http: '200',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'COMPLETE',
+    host: 'https://google.com',
+    http: '200',
+    ping: 'PASSED',
+    port: 'PASSED',
     packetLoss: '0.000'
   }
 ]
-```
 
-### Show table
-
-```javascript
-import { checkHosts, IHost, RequestType } from 'domain-check-tool';
-
-const host: IHost[] = [
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 21,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    }
-]
-
-checkHosts(host, true).then(response => console.log(response));
-```
-
-```bash
-┌────────┬────────┬────────────────────┬──────┬──────┬──────┬───────┐
-│ STATUS │ NAME   │ HOST               │ HTTP │ PORT │ PING │ LOSS% │
-├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
-│   ✔    │ Google │ https://google.com │ 200  │  ✔   │  ✔   │ 0.000 │
-├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
-│   ✖    │ Google │ https://google.com │ 400  │  ✔   │  ✔   │ 0.000 │
-├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
-│   ✖    │ Google │ https://google.com │ 400  │  ✖   │  ✔   │ 0.000 │
-└────────┴────────┴────────────────────┴──────┴──────┴──────┴───────┘
-```
-
-### Show only errors in table
-
-```javascript
-import { checkHosts, IHost, RequestType } from 'domain-check-tool';
-
-const host: IHost[] = [
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 21,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    }
-]
-
-checkHosts(host, true, true).then(response => console.log(response));
-```
-
-```bash
-┌────────┬────────┬────────────────────┬──────┬──────┬──────┬───────┐
-│ STATUS │ NAME   │ HOST               │ HTTP │ PORT │ PING │ LOSS% │
-├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
-│   ✖    │ Google │ https://google.com │ 400  │  ✔   │  ✔   │ 0.000 │
-├────────┼────────┼────────────────────┼──────┼──────┼──────┼───────┤
-│   ✖    │ Google │ https://google.com │ 400  │  ✖   │  ✔   │ 0.000 │
-└────────┴────────┴────────────────────┴──────┴──────┴──────┴───────┘
-```
-
-### Skip process
-
-```javascript
-const host: IHost[] = [
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 80,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 21,
-        httpRequestType: RequestType.GET,
-        header: {
-            user: 'user'
-        },
-        body: { message: 'hello' },
-    },
-    {
-        name: 'Google',
-        host: 'https://google.com',
-        port: 21,
-        httpRequestType: RequestType.GET,
-        bypassHttp: true,
-        bypassPing: false,
-        bypassPort: true,
-    }
-]
-
-checkHosts(host, true);
-```
-
-```bash
-┌────────┬────────┬────────────────────┬─────────┬─────────┬──────┬───────┐
-│ STATUS │ NAME   │ HOST               │  HTTP   │  PORT   │ PING │ LOSS% │
-├────────┼────────┼────────────────────┼─────────┼─────────┼──────┼───────┤
-│   ✔    │ Google │ https://google.com │   200   │    ✔    │  ✔   │ 0.000 │
-├────────┼────────┼────────────────────┼─────────┼─────────┼──────┼───────┤
-│   ✖    │ Google │ https://google.com │   400   │    ✔    │  ✔   │ 0.000 │
-├────────┼────────┼────────────────────┼─────────┼─────────┼──────┼───────┤
-│   ✖    │ Google │ https://google.com │ SKIPPED │ SKIPPED │  ✔   │ 0.000 │
-├────────┼────────┼────────────────────┼─────────┼─────────┼──────┼───────┤
-│   ✖    │ Google │ https://google.com │   400   │ SKIPPED │  ✔   │ 0.000 │
-└────────┴────────┴────────────────────┴─────────┴─────────┴──────┴───────┘
 ```
