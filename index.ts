@@ -91,9 +91,9 @@ export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyEr
                 isAlive: isAlivePing && isAliveHttp && isAlivePort?isAlivePort:false, 
                 hostName: hostObject.name,
                 host: hostObject.host,
-                http: hostObject.bypassHttp? 'SKIPED':axiosResponse!==undefined&&axiosResponse!==null? axiosResponse.status: axiosError, 
-                ping: hostObject.bypassPing? 'SKIPED':isAlivePing!==undefined?isAlivePing:false,
-                port: hostObject.bypassPort? 'SKIPED':isAlivePort!==undefined?isAlivePort:false,
+                http: hostObject.bypassHttp? 'SKIPPED':axiosResponse!==undefined&&axiosResponse!==null? axiosResponse.status: axiosError, 
+                ping: hostObject.bypassPing? 'SKIPPED':isAlivePing!==undefined?isAlivePing:false,
+                port: hostObject.bypassPort? 'SKIPPED':isAlivePort!==undefined?isAlivePort:false,
                 packetLoss: hostObject.bypassPing? '':`${pingResponse?pingResponse.packetLoss:'NO INFO'}`,
           });
     });
@@ -108,7 +108,7 @@ export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyEr
         });
     
         results.filter(result => showOnlyErrors?result.isAlive===false:result.isAlive===result.isAlive).sort((a,b) => (b.isAlive - a.isAlive)).forEach(result => {
-            table.push([result.isAlive?'✔':'✖', result.hostName, result.host, result.http, result.port?'✔':result.port!=='SKIPED'?'SKIPED':'✖', result.ping? '✔':result.ping!=='SKIPED'?'SKIPED':'✖', result.packetLoss]);
+            table.push([result.isAlive?'✔':'✖', result.hostName, result.host, result.http, result.port?'✔':result.port!=='SKIPPED'?'SKIPPED':'✖', result.ping? '✔':result.ping!=='SKIPPED'?'SKIPPED':'✖', result.packetLoss]);
         })
 
         console.log(table.toString());
