@@ -22,5 +22,16 @@
     "cli-table": "^0.3.4",
     "is-port-reachable": "^3.0.0",
     "ping": "^0.4.0"
-  }
+  },
+  "keywords": [
+    "domain",
+    "host",
+    "check",
+    "monitor",
+    "ping",
+    "icmp",
+    "http",
+    "https",
+    "port"
+  ]
 }
