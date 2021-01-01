@@ -173,3 +173,61 @@ checkHosts(host, true, true).then(response => console.log(response));
 │   ✖    │ Google │ https://google.com │ 400  │  ✖   │  ✔   │ 0.000 │
 └────────┴────────┴────────────────────┴──────┴──────┴──────┴───────┘
 ```
+
+### Skip process
+
+```javascript
+const host: IHost[] = [
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 80,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 21,
+        httpRequestType: RequestType.GET,
+        header: {
+            user: 'user'
+        },
+        body: { message: 'hello' },
+    },
+    {
+        name: 'Google',
+        host: 'https://google.com',
+        port: 21,
+        httpRequestType: RequestType.GET,
+        bypassHttp: true,
+        bypassPing: false,
+        bypassPort: false,
+    }
+]
+
+checkHosts(host, true);
+```
+
+```bash
+┌────────┬────────┬────────────────────┬────────┬──────┬──────┬───────┐
+│ STATUS │ NAME   │ HOST               │  HTTP  │ PORT │ PING │ LOSS% │
+├────────┼────────┼────────────────────┼────────┼──────┼──────┼───────┤
+│   ✔    │ Google │ https://google.com │  200   │  ✔   │  ✔   │ 0.000 │
+├────────┼────────┼────────────────────┼────────┼──────┼──────┼───────┤
+│   ✖    │ Google │ https://google.com │  400   │  ✔   │  ✔   │ 0.000 │
+├────────┼────────┼────────────────────┼────────┼──────┼──────┼───────┤
+│   ✖    │ Google │ https://google.com │ SKIPED │  ✖   │  ✔   │ 0.000 │
+├────────┼────────┼────────────────────┼────────┼──────┼──────┼───────┤
+│   ✖    │ Google │ https://google.com │  400   │  ✖   │  ✔   │ 0.000 │
+└────────┴────────┴────────────────────┴────────┴──────┴──────┴───────┘
+```

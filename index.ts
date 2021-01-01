@@ -40,7 +40,7 @@ export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyEr
 
     const promises = hosts.map(async hostObject => {
 
-        if(hostObject.bypassHttp && hostObject.bypassPing){
+        if(hostObject.bypassHttp && hostObject.bypassPing && hostObject.bypassPort){
             return;
         }
 
@@ -108,7 +108,7 @@ export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyEr
         });
     
         results.filter(result => showOnlyErrors?result.isAlive===false:result.isAlive===result.isAlive).sort((a,b) => (b.isAlive - a.isAlive)).forEach(result => {
-            table.push([result.isAlive?'✔':'✖', result.hostName, result.host, result.http, result.port? '✔':'✖', result.ping? '✔':'✖', result.packetLoss]);
+            table.push([result.isAlive?'✔':'✖', result.hostName, result.host, result.http, result.port?'✔':result.port!=='SKIPED'?'SKIPED':'✖', result.ping? '✔':result.ping!=='SKIPED'?'SKIPED':'✖', result.packetLoss]);
         })
 
         console.log(table.toString());
