@@ -6,9 +6,7 @@ For monitor a list of hosts using HTTP requests and ICMP.
 ## Credits
 Without those libs this project won't work!
 
-[PING](https://www.npmjs.com/package/ping)
-[CLI-TABLE](https://www.npmjs.com/package/cli-table)
-[AXIOS](https://www.npmjs.com/package/axios)
+[PING](https://www.npmjs.com/package/ping) | [CLI-TABLE](https://www.npmjs.com/package/cli-table) | [IS-PORT-REACHABLE](https://www.npmjs.com/package/is-port-reachable) | [AXIOS](https://www.npmjs.com/package/axios)
 ## Examples
 
 ### Simple return
