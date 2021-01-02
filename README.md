@@ -6,7 +6,7 @@ For monitor a list of hosts using HTTP, ICMP and PORT check.
 ## Credits
 Without those libs this project won't work!
 
-[PING](https://www.npmjs.com/package/ping) | [CLI-TABLE3](https://www.npmjs.com/package/cli-table3) | [IS-PORT-REACHABLE](https://www.npmjs.com/package/is-port-reachable) | [AXIOS](https://www.npmjs.com/package/axios) | [LODASH](https://www.npmjs.com/package/lodash)
+[PING](https://www.npmjs.com/package/ping) | [CLI-TABLE3](https://www.npmjs.com/package/cli-table3) | [COLORS](https://www.npmjs.com/package/colors) | [IS-PORT-REACHABLE](https://www.npmjs.com/package/is-port-reachable) | [AXIOS](https://www.npmjs.com/package/axios) | [LODASH](https://www.npmjs.com/package/lodash)
 
 ## Examples
 
