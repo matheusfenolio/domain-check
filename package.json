@@ -1,6 +1,6 @@
 {
   "name": "domain-check-tool",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "main": "lib/index.js",
   "types": "lib",
   "license": "MIT",
