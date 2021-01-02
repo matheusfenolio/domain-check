@@ -18,6 +18,7 @@ export interface IHost {
     httpRequestType?: RequestType;
     header?: object | null;
     body?: object | null;
+    bypassUrlValidation?: boolean;
     bypassHttp?: boolean;
     bypassPing?: boolean;
     bypassPort?: boolean;

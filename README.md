@@ -6,7 +6,7 @@ For monitor a list of hosts using HTTP, ICMP and PORT check.
 ## Credits
 Without those libs this project won't work!
 
-[PING](https://www.npmjs.com/package/ping) | [CLI-TABLE](https://www.npmjs.com/package/cli-table) | [IS-PORT-REACHABLE](https://www.npmjs.com/package/is-port-reachable) | [AXIOS](https://www.npmjs.com/package/axios) | [LODASH](https://www.npmjs.com/package/lodash)
+[PING](https://www.npmjs.com/package/ping) | [CLI-TABLE3](https://www.npmjs.com/package/cli-table3) | [IS-PORT-REACHABLE](https://www.npmjs.com/package/is-port-reachable) | [AXIOS](https://www.npmjs.com/package/axios) | [LODASH](https://www.npmjs.com/package/lodash)
 
 ## Examples
 
@@ -98,31 +98,31 @@ checkHosts(hosts, true).then(response => console.log(response));
 
 ```bash
 ┌────────┬─────────────────────────────────────────────┬────────────────────────────────┬─────────────┬─────────┬────────┬───────┐
-│ STATUS │ NAME                                        │ HOST                           │    HTTP     │  PORT   │  PING  │ LOSS% │
+│ STATUS │ IDENTIFIER                                  │ HOST                           │    HTTP     │  PORT   │  PING  │ LOSS% │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✖    │ UNKNOW HOST                                 │ https://unknowmhostfortest.com │  ENOTFOUND  │  ERROR  │ ERROR  │ ERROR │
+│   ⏹    │ UNKNOW HOST                                 │ https://unknowmhostfortest.com │  ENOTFOUND  │  ERROR  │ ERROR  │ ERROR │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✖    │ WWW                                         │ www.google.com                 │   INVALID   │ SKIPPED │ PASSED │ 0.000 │
+│   ⏹    │ WWW                                         │ www.google.com                 │   INVALID   │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ HOST                                        │ google.com                     │   SKIPPED   │ SKIPPED │ PASSED │ 0.000 │
+│   ⚫   │ HOST                                        │ google.com                     │   SKIPPED   │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ PORT                                        │ https://google.com             │   SKIPPED   │ PASSED  │ PASSED │ 0.000 │
+│   ⏹    │ INVALID URL                                 │ google.com                     │   INVALID   │ PASSED  │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✖    │ INVALID URL                                 │ google.com                     │   INVALID   │ PASSED  │ PASSED │ 0.000 │
+│   ⚫   │ PORT                                        │ https://google.com             │   SKIPPED   │ PASSED  │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTP + WWW                                  │ http://www.google.com          │     OK      │ SKIPPED │ PASSED │ 0.000 │
+│   ⚫   │ HTTP + WWW                                  │ http://www.google.com          │     OK      │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✖    │ BODY. ALSO THIS ONE WILL RETURN BAD REQUEST │ https://google.com             │ BAD REQUEST │ SKIPPED │ PASSED │ 0.000 │
+│   ⏹    │ BODY. ALSO THIS ONE WILL RETURN BAD REQUEST │ https://google.com             │ BAD REQUEST │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTPS + WWW                                 │ https://www.google.com         │     OK      │ SKIPPED │ PASSED │ 0.000 │
+│   ⚫   │ HTTPS + WWW                                 │ https://www.google.com         │     OK      │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTP                                        │ http://google.com              │     OK      │ SKIPPED │ PASSED │ 0.000 │
+│   ⚫   │ HTTP                                        │ http://google.com              │     OK      │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTPS                                       │ https://google.com             │     OK      │ SKIPPED │ PASSED │ 0.000 │
+│   ⚫   │ HEADER                                      │ https://google.com             │     OK      │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ HEADER                                      │ https://google.com             │     OK      │ SKIPPED │ PASSED │ 0.000 │
+│   ⚫   │ HTTPS                                       │ https://google.com             │     OK      │ SKIPPED │ PASSED │ 0.000 │
 ├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
-│   ✔    │ COMPLETE                                    │ https://google.com             │     OK      │ PASSED  │ PASSED │ 0.000 │
+│   ⚫   │ COMPLETE                                    │ https://google.com             │     OK      │ PASSED  │ PASSED │ 0.000 │
 └────────┴─────────────────────────────────────────────┴────────────────────────────────┴─────────────┴─────────┴────────┴───────┘
 
 ```
@@ -240,4 +240,102 @@ checkHosts(hosts, true).then(response => console.log(response));
     packetLoss: '0.000'
   }
 ]
+```
+## Using with EXPRESS
+
+```javascript
+import express from 'express';
+import { checkHosts, IHost, RequestType } from 'domain-check-tool';
+
+const server = express();
+
+server.get('/testGET', (req, res) => {
+    res.send(200);
+});
+
+server.post('/testPOST', (req, res) => {
+    res.send(200);
+});
+
+server.delete('/testDELETE', (req, res) => {
+    res.send(200);
+});
+
+server.put('/testPUT', (req, res) => {
+    res.send(200);
+});
+
+server.get('/test400', (req, res) => {
+    res.send(400);
+});
+
+server.get('/test500', (req, res) => {
+    res.send(500);
+});
+
+
+
+server.listen(3333, () => {
+    const hosts: IHost[] = [
+        {
+            host: 'http://localhost:3333/testGET',
+            identifier: 'GET',
+            bypassPing: true,
+            bypassUrlValidation: true,
+        },
+        {
+            host: 'http://localhost:3333/testPOST',
+            httpRequestType: RequestType.POST,
+            identifier: 'POST',
+            bypassPing: true,
+            bypassUrlValidation: true,
+        },
+        {
+            host: 'http://localhost:3333/testDELETE',
+            httpRequestType: RequestType.DELETE,
+            identifier: 'DELETE',
+            bypassPing: true,
+            bypassUrlValidation: true,
+        },
+        {
+            host: 'http://localhost:3333/testPUT',
+            httpRequestType: RequestType.PUT,
+            identifier: 'PUT',
+            bypassPing: true,
+            bypassUrlValidation: true,
+        },
+        {
+            host: 'http://localhost:3333/test400',
+            identifier: '400',
+            bypassPing: true,
+            bypassUrlValidation: true,
+        },
+        {
+            host: 'http://localhost:3333/test500',
+            identifier: '500',
+            bypassPing: true,
+            bypassUrlValidation: true,
+        },
+    ]
+    
+    checkHosts(hosts, true);
+});
+```
+### Table printed
+```bash
+┌────────┬────────────┬──────────────────────────────────┬───────────────────────┬─────────┬─────────┬─────────┐
+│ STATUS │ IDENTIFIER │ HOST                             │         HTTP          │  PORT   │  PING   │  LOSS%  │
+├────────┼────────────┼──────────────────────────────────┼───────────────────────┼─────────┼─────────┼─────────┤
+│   ⏺    │ GET        │ http://localhost:3333/testGET    │          OK           │ SKIPPED │ SKIPPED │ SKIPPED │
+├────────┼────────────┼──────────────────────────────────┼───────────────────────┼─────────┼─────────┼─────────┤
+│   ⏺    │ POST       │ http://localhost:3333/testPOST   │          OK           │ SKIPPED │ SKIPPED │ SKIPPED │
+├────────┼────────────┼──────────────────────────────────┼───────────────────────┼─────────┼─────────┼─────────┤
+│   ⏺    │ DELETE     │ http://localhost:3333/testDELETE │          OK           │ SKIPPED │ SKIPPED │ SKIPPED │
+├────────┼────────────┼──────────────────────────────────┼───────────────────────┼─────────┼─────────┼─────────┤
+│   ⏺    │ PUT        │ http://localhost:3333/testPUT    │          OK           │ SKIPPED │ SKIPPED │ SKIPPED │
+├────────┼────────────┼──────────────────────────────────┼───────────────────────┼─────────┼─────────┼─────────┤
+│   ⏹    │ 400        │ http://localhost:3333/test400    │      BAD REQUEST      │ SKIPPED │ SKIPPED │ SKIPPED │
+├────────┼────────────┼──────────────────────────────────┼───────────────────────┼─────────┼─────────┼─────────┤
+│   ⏹    │ 500        │ http://localhost:3333/test500    │ INTERNAL SERVER ERROR │ SKIPPED │ SKIPPED │ SKIPPED │
+└────────┴────────────┴──────────────────────────────────┴───────────────────────┴─────────┴─────────┴─────────┘
 ```

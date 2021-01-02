@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { PingResponse, promise } from 'ping';
-import Table from 'cli-table';
+import Table from 'cli-table3';
 import _ from 'lodash';
 import HTTPStatus from './httpStatusCode';
+import colors from 'colors';
 
 const isPortReachable = require('is-port-reachable');
 
@@ -34,6 +35,7 @@ export interface IHost {
     httpRequestType?: RequestType,
     header?: object | null,
     body?: object | null,
+    bypassUrlValidation?: boolean,
     bypassHttp?: boolean,
     bypassPing?: boolean,
     bypassPort?: boolean,
@@ -62,7 +64,7 @@ const requestHttp = async (host: IHost): Promise<IHostResponse> => {
     }
 
     try{
-        if(validateURL(host.host)){
+        if(validateURL(host.host) || host.bypassUrlValidation){
             const response = await axios({
                 url: host.host,
                 method: _.isNil(host.httpRequestType)?RequestType.GET:host.httpRequestType,
@@ -71,7 +73,7 @@ const requestHttp = async (host: IHost): Promise<IHostResponse> => {
               });
             return { isAlive: true, code: HTTPStatus(response.status)};
         }else{
-            return { isAlive: false, code: ResponseStatus.INVALID  }
+            return { isAlive: false, code: ResponseStatus.INVALID }
         }
     }catch(err){
         return { isAlive: false, code: _.isNil(err.code)?HTTPStatus(err.response.status):HTTPStatus(err.code) }
@@ -137,11 +139,21 @@ export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyEr
     if(showTable){
         const table = new Table({
             head: ['STATUS', 'IDENTIFIER', 'HOST', 'HTTP', 'PORT', 'PING', 'LOSS%'],
-            colAligns: ["middle", "left", "left", "middle", "middle", "middle", "middle"]
+            colAligns: ["center", "left", "left", "center", "center", "center", "center"]
         });
     
         results.filter(result => showOnlyErrors?result.isAlive===false:result.isAlive===result.isAlive).forEach(result => {
-            table.push([result.isAlive?'✔':'✖', result.hostIdentifier, result.host, result.http, result.port, result.ping, result.packetLoss]);
+            table.push(
+                [
+                    result.isAlive?colors.green('⏺'):colors.red('⏹'), 
+                    result.hostIdentifier, 
+                    result.host, 
+                    result.http, 
+                    result.port, 
+                    result.ping, 
+                    result.packetLoss
+                ]
+            );
         })
 
         console.log(table.toString());
