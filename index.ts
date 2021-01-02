@@ -2,7 +2,7 @@ import axios from 'axios';
 import { PingResponse, promise } from 'ping';
 import Table from 'cli-table3';
 import _ from 'lodash';
-import HTTPStatus from './httpStatusCode';
+import { HttpMessage } from 'easy-http-code';
 import colors from 'colors';
 
 const isPortReachable = require('is-port-reachable');
@@ -71,12 +71,12 @@ const requestHttp = async (host: IHost): Promise<IHostResponse> => {
                 headers: host.header, 
                 data: host.body
               });
-            return { isAlive: true, code: HTTPStatus(response.status)};
+            return { isAlive: true, code: HttpMessage(response.status)};
         }else{
             return { isAlive: false, code: ResponseStatus.INVALID }
         }
     }catch(err){
-        return { isAlive: false, code: _.isNil(err.code)?HTTPStatus(err.response.status):HTTPStatus(err.code) }
+        return { isAlive: false, code: _.isNil(err.code)?HttpMessage(err.response.status):HttpMessage(err.code) }
     }
 }
 

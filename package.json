@@ -21,6 +21,7 @@
     "axios": "^0.21.1",
     "cli-table3": "^0.6.0",
     "colors": "^1.4.0",
+    "easy-http-code": "^1.1.2",
     "is-port-reachable": "^3.0.0",
     "lodash": "^4.17.20",
     "ping": "^0.4.0"

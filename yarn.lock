@@ -184,6 +184,11 @@ dynamic-dedupe@^0.3.0:
   dependencies:
     xtend "^4.0.0"
 
+easy-http-code@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/easy-http-code/-/easy-http-code-1.1.2.tgz#111b76d67d9ef2d57f9d33bd7063d0ffa2b4edea"
+  integrity sha512-eAMvMMyQsJiorx1UmMJBFbjnY3Bcbx9b6s8YKAAE7eh4co6o3UZE4Am4dpI1Z0jrI732XkpxFrSV8pcY+iPRKg==
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
