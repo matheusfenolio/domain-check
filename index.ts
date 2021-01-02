@@ -136,7 +136,7 @@ export const checkHosts = async (hosts: IHost[], showTable?: boolean, showOnlyEr
 
     if(showTable){
         const table = new Table({
-            head: ['STATUS', 'NAME', 'HOST', 'HTTP', 'PORT', 'PING', 'LOSS%'],
+            head: ['STATUS', 'IDENTIFIER', 'HOST', 'HTTP', 'PORT', 'PING', 'LOSS%'],
             colAligns: ["middle", "left", "left", "middle", "middle", "middle", "middle"]
         });
     
