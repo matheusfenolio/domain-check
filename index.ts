@@ -2,13 +2,15 @@ import axios from 'axios';
 import { PingResponse, promise } from 'ping';
 import Table from 'cli-table';
 import _ from 'lodash';
+import HTTPStatus from './httpStatusCode';
 
 const isPortReachable = require('is-port-reachable');
 
-interface IHostResponse {
-    isAlive: boolean,
-    code: string,
-    packetLoss?: string
+export enum ResponseStatus {
+    PASSED = 'PASSED',
+    ERROR = 'ERROR',
+    INVALID = 'INVALID',
+    SKIPPED = 'SKIPPED'
 }
 
 export enum RequestType {
@@ -18,6 +20,13 @@ export enum RequestType {
     PUT = 'PUT',
     PATCH = 'PATCH'
 }
+
+interface IHostResponse {
+    isAlive: boolean,
+    code: string,
+    packetLoss?: string
+}
+
 export interface IHost {
     host: string,
     identifier?: string,
@@ -30,12 +39,7 @@ export interface IHost {
     bypassPort?: boolean,
 }
 
-export enum ResponseStatus {
-    PASSED = 'PASSED',
-    ERROR = 'ERROR',
-    INVALID = 'INVALID',
-    SKIPPED = 'SKIPPED'
-}
+
 export interface IResults {
     isAlive: boolean,
     hostIdentifier: string,
@@ -65,12 +69,12 @@ const requestHttp = async (host: IHost): Promise<IHostResponse> => {
                 headers: host.header, 
                 data: host.body
               });
-            return { isAlive: true, code: response.status.toString()};
+            return { isAlive: true, code: HTTPStatus(response.status)};
         }else{
             return { isAlive: false, code: ResponseStatus.INVALID  }
         }
     }catch(err){
-        return { isAlive: false, code: _.isNil(err.code)?err.response.status.toString():err.code.toString() }
+        return { isAlive: false, code: _.isNil(err.code)?HTTPStatus(err.response.status):HTTPStatus(err.code) }
     }
 }
 

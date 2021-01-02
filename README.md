@@ -11,7 +11,7 @@ Without those libs this project won't work!
 ## Examples
 
 ```javascript
-import { checkHosts, IHost, RequestType } from 'domain-check-tool';
+import { checkHosts, IHost, RequestType } from './index';
 
 const hosts: IHost[] = [
     {
@@ -58,6 +58,28 @@ const hosts: IHost[] = [
         bypassHttp: true,
     },
     {
+        host: 'google.com',
+        identifier: 'INVALID URL',
+        httpRequestType: RequestType.GET,
+        port: 80,
+        header: null,
+        body: null,
+        bypassHttp: false,
+        bypassPing: false,
+        bypassPort: false
+    },
+    {
+        host: 'https://unknowmhostfortest.com',
+        identifier: 'UNKNOW HOST',
+        httpRequestType: RequestType.GET,
+        port: 80,
+        header: null,
+        body: null,
+        bypassHttp: false,
+        bypassPing: false,
+        bypassPort: false
+    },
+    {
         host: 'https://google.com',
         identifier: 'COMPLETE',
         httpRequestType: RequestType.GET,
@@ -67,7 +89,7 @@ const hosts: IHost[] = [
         bypassHttp: false,
         bypassPing: false,
         bypassPort: false
-    }
+    },
 ]
 
 checkHosts(hosts, true).then(response => console.log(response));
@@ -75,35 +97,49 @@ checkHosts(hosts, true).then(response => console.log(response));
 ### Table printed
 
 ```bash
-┌────────┬─────────────────────────────────────────────┬────────────────────────┬─────────┬─────────┬────────┬───────┐
-│ STATUS │ NAME                                        │ HOST                   │  HTTP   │  PORT   │  PING  │ LOSS% │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✖    │ WWW                                         │ www.google.com         │ INVALID │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ HOST                                        │ google.com             │ SKIPPED │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTP + WWW                                  │ http://www.google.com  │   200   │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTPS + WWW                                 │ https://www.google.com │   200   │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ PORT                                        │ https://google.com     │ SKIPPED │ PASSED  │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTP                                        │ http://google.com      │   200   │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✖    │ BODY. ALSO THIS ONE WILL RETURN BAD REQUEST │ https://google.com     │   400   │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ HTTPS                                       │ https://google.com     │   200   │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ HEADER                                      │ https://google.com     │   200   │ SKIPPED │ PASSED │ 0.000 │
-├────────┼─────────────────────────────────────────────┼────────────────────────┼─────────┼─────────┼────────┼───────┤
-│   ✔    │ COMPLETE                                    │ https://google.com     │   200   │ PASSED  │ PASSED │ 0.000 │
-└────────┴─────────────────────────────────────────────┴────────────────────────┴─────────┴─────────┴────────┴───────┘
+┌────────┬─────────────────────────────────────────────┬────────────────────────────────┬─────────────┬─────────┬────────┬───────┐
+│ STATUS │ NAME                                        │ HOST                           │    HTTP     │  PORT   │  PING  │ LOSS% │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✖    │ UNKNOW HOST                                 │ https://unknowmhostfortest.com │  ENOTFOUND  │  ERROR  │ ERROR  │ ERROR │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✖    │ WWW                                         │ www.google.com                 │   INVALID   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ HOST                                        │ google.com                     │   SKIPPED   │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ PORT                                        │ https://google.com             │   SKIPPED   │ PASSED  │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✖    │ INVALID URL                                 │ google.com                     │   INVALID   │ PASSED  │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTP + WWW                                  │ http://www.google.com          │     OK      │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✖    │ BODY. ALSO THIS ONE WILL RETURN BAD REQUEST │ https://google.com             │ BAD REQUEST │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTPS + WWW                                 │ https://www.google.com         │     OK      │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTP                                        │ http://google.com              │     OK      │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ HTTPS                                       │ https://google.com             │     OK      │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ HEADER                                      │ https://google.com             │     OK      │ SKIPPED │ PASSED │ 0.000 │
+├────────┼─────────────────────────────────────────────┼────────────────────────────────┼─────────────┼─────────┼────────┼───────┤
+│   ✔    │ COMPLETE                                    │ https://google.com             │     OK      │ PASSED  │ PASSED │ 0.000 │
+└────────┴─────────────────────────────────────────────┴────────────────────────────────┴─────────────┴─────────┴────────┴───────┘
+
 ```
 
 ### Object returned
 
 ```javascript
 [
+  {
+    isAlive: false,
+    hostIdentifier: 'UNKNOW HOST',
+    host: 'https://unknowmhostfortest.com',
+    http: 'ENOTFOUND',
+    ping: 'ERROR',
+    port: 'ERROR',
+    packetLoss: 'ERROR'
+  },
   {
     isAlive: false,
     hostIdentifier: 'WWW',
@@ -124,24 +160,6 @@ checkHosts(hosts, true).then(response => console.log(response));
   },
   {
     isAlive: true,
-    hostIdentifier: 'HTTP + WWW',
-    host: 'http://www.google.com',
-    http: '200',
-    ping: 'PASSED',
-    port: 'SKIPPED',
-    packetLoss: '0.000'
-  },
-  {
-    isAlive: true,
-    hostIdentifier: 'HTTPS + WWW',
-    host: 'https://www.google.com',
-    http: '200',
-    ping: 'PASSED',
-    port: 'SKIPPED',
-    packetLoss: '0.000'
-  },
-  {
-    isAlive: true,
     hostIdentifier: 'PORT',
     host: 'https://google.com',
     http: 'SKIPPED',
@@ -150,10 +168,19 @@ checkHosts(hosts, true).then(response => console.log(response));
     packetLoss: '0.000'
   },
   {
+    isAlive: false,
+    hostIdentifier: 'INVALID URL',
+    host: 'google.com',
+    http: 'INVALID',
+    ping: 'PASSED',
+    port: 'PASSED',
+    packetLoss: '0.000'
+  },
+  {
     isAlive: true,
-    hostIdentifier: 'HTTP',
-    host: 'http://google.com',
-    http: '200',
+    hostIdentifier: 'HTTP + WWW',
+    host: 'http://www.google.com',
+    http: 'OK',
     ping: 'PASSED',
     port: 'SKIPPED',
     packetLoss: '0.000'
@@ -162,7 +189,25 @@ checkHosts(hosts, true).then(response => console.log(response));
     isAlive: false,
     hostIdentifier: 'BODY. ALSO THIS ONE WILL RETURN BAD REQUEST',
     host: 'https://google.com',
-    http: '400',
+    http: 'BAD REQUEST',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'HTTPS + WWW',
+    host: 'https://www.google.com',
+    http: 'OK',
+    ping: 'PASSED',
+    port: 'SKIPPED',
+    packetLoss: '0.000'
+  },
+  {
+    isAlive: true,
+    hostIdentifier: 'HTTP',
+    host: 'http://google.com',
+    http: 'OK',
     ping: 'PASSED',
     port: 'SKIPPED',
     packetLoss: '0.000'
@@ -171,7 +216,7 @@ checkHosts(hosts, true).then(response => console.log(response));
     isAlive: true,
     hostIdentifier: 'HTTPS',
     host: 'https://google.com',
-    http: '200',
+    http: 'OK',
     ping: 'PASSED',
     port: 'SKIPPED',
     packetLoss: '0.000'
@@ -180,7 +225,7 @@ checkHosts(hosts, true).then(response => console.log(response));
     isAlive: true,
     hostIdentifier: 'HEADER',
     host: 'https://google.com',
-    http: '200',
+    http: 'OK',
     ping: 'PASSED',
     port: 'SKIPPED',
     packetLoss: '0.000'
@@ -189,11 +234,10 @@ checkHosts(hosts, true).then(response => console.log(response));
     isAlive: true,
     hostIdentifier: 'COMPLETE',
     host: 'https://google.com',
-    http: '200',
+    http: 'OK',
     ping: 'PASSED',
     port: 'PASSED',
     packetLoss: '0.000'
   }
 ]
-
 ```

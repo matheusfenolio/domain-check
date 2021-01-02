@@ -45,6 +45,28 @@ const hosts: IHost[] = [
         bypassHttp: true,
     },
     {
+        host: 'google.com',
+        identifier: 'INVALID URL',
+        httpRequestType: RequestType.GET,
+        port: 80,
+        header: null,
+        body: null,
+        bypassHttp: false,
+        bypassPing: false,
+        bypassPort: false
+    },
+    {
+        host: 'https://unknowmhostfortest.com',
+        identifier: 'UNKNOW HOST',
+        httpRequestType: RequestType.GET,
+        port: 80,
+        header: null,
+        body: null,
+        bypassHttp: false,
+        bypassPing: false,
+        bypassPort: false
+    },
+    {
         host: 'https://google.com',
         identifier: 'COMPLETE',
         httpRequestType: RequestType.GET,
@@ -54,7 +76,7 @@ const hosts: IHost[] = [
         bypassHttp: false,
         bypassPing: false,
         bypassPort: false
-    }
+    },
 ]
 
 checkHosts(hosts, true).then(response => console.log(response));

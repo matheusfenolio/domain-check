@@ -1,3 +1,9 @@
+export declare enum ResponseStatus {
+    PASSED = "PASSED",
+    ERROR = "ERROR",
+    INVALID = "INVALID",
+    SKIPPED = "SKIPPED"
+}
 export declare enum RequestType {
     GET = "GET",
     POST = "POST",
@@ -15,12 +21,6 @@ export interface IHost {
     bypassHttp?: boolean;
     bypassPing?: boolean;
     bypassPort?: boolean;
-}
-export declare enum ResponseStatus {
-    PASSED = "PASSED",
-    ERROR = "ERROR",
-    INVALID = "INVALID",
-    SKIPPED = "SKIPPED"
 }
 export interface IResults {
     isAlive: boolean;
